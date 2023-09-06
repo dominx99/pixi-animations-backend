@@ -10,9 +10,10 @@ services:
     volumes:
       - .:/application
       - ./docker/php/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini
-      - ./etc/infrastructure/php/conf.d/xdebug.ini:/etc/php/8.2/fpm/conf.d/20-xdebug.ini
-      - ./etc/infrastructure/php/conf.d/xdebug.ini:/etc/php/8.2/cli/conf.d/20-xdebug.ini
-      - /tmp/xdebug:/tmp/xdebug
+      - ./docker/php/php-ini-overrides.ini:/etc/php/8.2/cli/conf.d/99-overrides.ini
+      # - ./etc/infrastructure/php/conf.d/xdebug.ini:/etc/php/8.2/fpm/conf.d/20-xdebug.ini
+      # - ./etc/infrastructure/php/conf.d/xdebug.ini:/etc/php/8.2/cli/conf.d/20-xdebug.ini
+      # - /tmp/xdebug:/tmp/xdebug
     environment:
       PHP_EXTENSION_IMAGICK: 1
     networks:

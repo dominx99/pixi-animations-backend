@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Cut\Application;
 
 use App\Cut\Command\Domain\CutIntoPartsContext;
+use App\Cut\Domain\ValueObject\Tile;
+use App\Cut\Domain\ValueObject\TilesetMetadata;
 use Imagick;
 
 final class ImagickTileCutter implements TileCutter
 {
-    public function cut(string $inputPath, string $outputDirectory, CutIntoPartsContext $context): void
+    public function cut(string $inputPath, string $outputDirectory, CutIntoPartsContext $context): TilesetMetadata
     {
         $imagick = new Imagick($inputPath);
         $details = $imagick->identifyImage();
@@ -18,6 +20,8 @@ final class ImagickTileCutter implements TileCutter
 
         $framesX = $details['geometry']['width'] / $context->tileWidth;
         $framesY = $details['geometry']['height'] / $context->tileHeight;
+
+        $metadata = new TilesetMetadata($framesX, $framesY, $context->tileWidth, $context->tileHeight);
 
         for ($y = 0; $y < $framesY; $y++) {
             for ($x = 0; $x < $framesX; $x++) {
@@ -30,9 +34,14 @@ final class ImagickTileCutter implements TileCutter
                     $y * $context->tileHeight
                 );
 
-                $imagick->writeImage($outputDirectory . DIRECTORY_SEPARATOR . $x . '_' . $y . '.png');
+                $filename = $x . '_' . $y . '.png';
+                $imagick->writeImage($outputDirectory . DIRECTORY_SEPARATOR . $filename);
+
+                $metadata->addTile(new Tile($x, $y, $filename));
             }
         }
+
+        return $metadata;
     }
 
     private function validate(array $details, CutIntoPartsContext $context)

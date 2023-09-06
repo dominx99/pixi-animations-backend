@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace App\Cut\UI\Http;
 
+use App\Files\Application\JsonFileManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class CutTilesetController
+final class CutTilesetController extends AbstractController
 {
-    #[Route('/cut-tileset', name: 'cut_tileset')]
+    public function __construct(private readonly JsonFileManager $jsonFileManager)
+    {
+    }
+
+    #[Route('/api/cut-tileset', name: 'cut_tileset')]
     public function __invoke(): JsonResponse
     {
-        $scannedDir = scandir('/application/src/resources/result');
-        $scannedDir = array_diff($scannedDir, ['..', '.']);
-        $scannedDir = array_map(fn ($file) => 'tiles/' . $file, $scannedDir);
-        $scannedDir = array_values($scannedDir);
+        $data = $this->jsonFileManager->load('/application/src/resources/metadata/metadata.json');
+        $data['tiles'] = array_map(fn ($item) => ([
+            ...$item,
+            'path' => 'https://tilesets.docker.localhost/tiles/' . $item['path'],
+        ]), $data['tiles']);
 
-        return new JsonResponse($scannedDir);
+        return new JsonResponse($data);
     }
 }

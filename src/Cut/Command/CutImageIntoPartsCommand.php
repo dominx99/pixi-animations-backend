@@ -6,6 +6,7 @@ namespace App\Cut\Command;
 
 use App\Cut\Application\TileCutter;
 use App\Cut\Command\Domain\CutIntoPartsContext;
+use App\Files\Application\JsonFileManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,8 +18,10 @@ use Symfony\Component\Console\Input\InputInterface;
 )]
 final class CutImageIntoPartsCommand extends Command
 {
-    public function __construct(private readonly TileCutter $tileCutter)
-    {
+    public function __construct(
+        private readonly TileCutter $tileCutter,
+        private readonly JsonFileManager $jsonFileManager
+    ) {
         parent::__construct();
     }
 
@@ -27,19 +30,20 @@ final class CutImageIntoPartsCommand extends Command
         $this
             ->addArgument('inputPath', InputArgument::REQUIRED, 'Path to the input image')
             ->addArgument('tileWidth', InputArgument::REQUIRED, 'Tile width')
-            ->addArgument('tileHeight', InputArgument::REQUIRED, 'Tile height')
-        ;
+            ->addArgument('tileHeight', InputArgument::REQUIRED, 'Tile height');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $inputPath = $input->getArgument('inputPath');
 
-        $this->tileCutter->cut(
+        $metadata = $this->tileCutter->cut(
             $inputPath,
             '/application/src/resources/result',
             CutIntoPartsContext::fromArray($input->getArguments())
         );
+
+        $this->jsonFileManager->save('/application/src/resources/metadata/metadata.json', $metadata->toArray());
 
         return Command::SUCCESS;
     }
