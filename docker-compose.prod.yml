@@ -1,0 +1,33 @@
+version: "3"
+services:
+  tilesets_php:
+    build:
+      context: ./
+      target: php
+      dockerfile: ./docker/php/Dockerfile-prod
+    image: ghcr.io/dominx99/tilesets-php
+    working_dir: /application
+    networks:
+      proxy:
+        ipv4_address: 10.200.31.2
+
+  tilesets_nginx:
+    build:
+      context: ./
+      target: nginx
+      dockerfile: ./docker/php/Dockerfile-prod
+    image: ghcr.io/dominx99/tilesets-nginx
+    depends_on:
+      - tilesets_php
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.tilesets_backend.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.tilesets_backend.tls.certresolver=lets_encrypt_resolver"
+    networks:
+      proxy:
+        ipv4_address: 10.200.31.3
+
+networks:
+  proxy:
+    external: true
