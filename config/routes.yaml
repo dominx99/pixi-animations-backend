@@ -1,5 +1,5 @@
 controllers:
     resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+        path: ../src/Cut/UI/Http/
+        namespace: App\Cut\UI\Http
     type: attribute
