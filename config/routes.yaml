@@ -3,3 +3,9 @@ controllers:
         path: ../src/Cut/UI/Http/
         namespace: App\Cut\UI\Http
     type: attribute
+
+merge_routes:
+  resource:
+    path: ../src/Merge/UI/Http
+    namespace: App\Merge\UI\Http
+  type: attribute
