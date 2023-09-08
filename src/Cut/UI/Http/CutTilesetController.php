@@ -11,17 +11,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 final class CutTilesetController extends AbstractController
 {
-    public function __construct(private readonly JsonFileManager $jsonFileManager)
+    public function __construct(private readonly JsonFileManager $jsonFileManager, private readonly string $tilesetsPath)
     {
     }
 
-    #[Route('/api/cut-tileset', name: 'cut_tileset')]
+    #[Route('/api/cut-tileset', name: 'api_cut_tileset')]
     public function __invoke(): JsonResponse
     {
-        $data = $this->jsonFileManager->load('/application/src/resources/metadata/metadata.json');
+        $data = $this->jsonFileManager->load($this->tilesetsPath . '/metadata/metadata.json');
         $data['tiles'] = array_map(fn ($item) => ([
             ...$item,
-            'path' => 'https://tilesets.docker.localhost/tiles/' . $item['path'],
+            'path' => 'tilesets/' . $item['path'],
+            'url' => 'https://tilesets.docker.localhost/tilesets/' . $item['path'],
         ]), $data['tiles']);
 
         return new JsonResponse($data);

@@ -20,7 +20,8 @@ final class CutImageIntoPartsCommand extends Command
 {
     public function __construct(
         private readonly TileCutter $tileCutter,
-        private readonly JsonFileManager $jsonFileManager
+        private readonly JsonFileManager $jsonFileManager,
+        private readonly string $tilesetsPath,
     ) {
         parent::__construct();
     }
@@ -39,11 +40,11 @@ final class CutImageIntoPartsCommand extends Command
 
         $metadata = $this->tileCutter->cut(
             $inputPath,
-            '/application/src/resources/result',
+            $this->tilesetsPath,
             CutIntoPartsContext::fromArray($input->getArguments())
         );
 
-        $this->jsonFileManager->save('/application/src/resources/metadata/metadata.json', $metadata->toArray());
+        $this->jsonFileManager->save($this->tilesetsPath . '/metadata/metadata.json', $metadata->toArray());
 
         return Command::SUCCESS;
     }

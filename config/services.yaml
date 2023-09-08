@@ -4,15 +4,23 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+  tilesetsPath: '%kernel.project_dir%/src/resources/tilesets'
+  resourcesPath: '%kernel.project_dir%/src/resources'
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $tilesetsPath: '%tilesetsPath%'
+            $resourcesPath: '%resourcesPath%'
 
     App\:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
-
+    #
+    # App\Merge\Application\ImagickTileMerger:
+    #   arguments:
+    #     $tilesetsPath: '%tilesetsPath%'

@@ -2,6 +2,6 @@
 
 composer install --no-scripts --no-interaction
 composer dump-autoload
-ln -sf /application/src/resources/result /application/public/tiles
+ln -sf /application/src/resources/tilesets /application/public/tilesets
 
 php-fpm

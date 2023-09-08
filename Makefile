@@ -67,11 +67,7 @@ fix:
 	@docker-compose exec $(tilesets-php-service) php vendor/bin/php-cs-fixer fix src --allow-risky=yes
 
 clear:
-	@docker-compose exec $(tilesets-php-service) php $(tilesets-console-location) cache:pool:clear cache.default_pool
 	@docker-compose exec $(tilesets-php-service) php $(tilesets-console-location) cache:clear
-	@docker-compose exec $(tilesets-php-service) php $(tilesets-console-location) doctrine:cache:clear-metadata
-	@docker-compose exec $(tilesets-php-service) php $(tilesets-console-location) doctrine:cache:clear-query
-	@docker-compose exec $(tilesets-php-service) php $(tilesets-console-location) doctrine:cache:clear-result
 
 .PHONY: test
 test: composer-env-file
