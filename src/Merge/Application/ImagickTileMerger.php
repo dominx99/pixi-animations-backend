@@ -47,7 +47,6 @@ final class ImagickTileMerger implements TileMerger
             foreach ($animationTile['tiles'] as $tile) {
                 $source = $this->resourcesPath . DIRECTORY_SEPARATOR . $tile['path'];
                 $tileImagick = new Imagick($source);
-                $tileImagick->writeImage(__DIR__ . DIRECTORY_SEPARATOR . 'tile' . '.png');
 
                 $moveX = $animationTile['x'] > 0 ? $animationTile['x'] : 0; // 0, 1, 2, 3
                 $moveX2 = ($options->tileWidth * $options->framesX * ($iteration - 1));
@@ -64,7 +63,6 @@ final class ImagickTileMerger implements TileMerger
             }
         }
 
-        $imagick->writeImage(__DIR__ . DIRECTORY_SEPARATOR . 'animation.png');
         return $imagick;
     }
 }
