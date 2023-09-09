@@ -17,4 +17,6 @@ CMD ["etc/application/symfony/start"]
 
 FROM nginx:1.23.2-alpine AS nginx
 
-WORKDIR /application
+COPY ./docker/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=php /application /application
+COPY --from=php /application/.env /application/.env
