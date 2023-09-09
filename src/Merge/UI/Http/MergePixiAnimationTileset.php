@@ -12,6 +12,7 @@ use App\Merge\Application\TileMerger;
 use App\Tiles\Application\OrderConfig;
 use App\Tiles\Application\TilesOrderer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,7 +28,7 @@ final class MergePixiAnimationTileset extends AbstractController
     }
 
     #[Route('/api/merge/pixi-animation-tileset', name: 'merge_pixi_animation_tileset', methods: ['POST'])]
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request)
     {
         $content = json_decode($request->getContent(), true);
 
@@ -38,7 +39,7 @@ final class MergePixiAnimationTileset extends AbstractController
             (int) $metadata['tileHeight'],
         ));
 
-        $tileset = $this->tileMerger->merge($content['tileset']['tiles'], new MergeOptions(
+        $tilesetImagick = $this->tileMerger->merge($content['tileset']['tiles'], new MergeOptions(
             $size->width,
             $size->height,
             (int) $metadata['tileWidth'],
@@ -47,6 +48,6 @@ final class MergePixiAnimationTileset extends AbstractController
             (int) $content['config']['framesY'],
         ));
 
-        return new JsonResponse([]);
+        return new BinaryFileResponse($tilesetImagick->getImageFilename());
     }
 }
