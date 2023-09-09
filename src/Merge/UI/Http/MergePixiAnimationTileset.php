@@ -27,12 +27,12 @@ final class MergePixiAnimationTileset extends AbstractController
     ) {
     }
 
-    #[Route('/api/merge/pixi-animation-tileset', name: 'merge_pixi_animation_tileset', methods: ['POST'])]
-    public function __invoke(Request $request)
+    #[Route('/api/tileset/merge/{id}', name: 'merge_pixi_animation_tileset', methods: ['POST'])]
+    public function __invoke(Request $request, $id)
     {
         $content = json_decode($request->getContent(), true);
 
-        $metadata = $this->jsonFileManager->load($this->tilesetsPath . DIRECTORY_SEPARATOR . '/metadata/metadata.json');
+        $metadata = $this->jsonFileManager->load(sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/metadata/metadata.json'));
 
         $size = $this->imageSizeDeterminant->determine($content['tileset']['tiles'], new ImageSizeOptions(
             (int) $metadata['tileWidth'],
@@ -46,7 +46,7 @@ final class MergePixiAnimationTileset extends AbstractController
             (int) $metadata['tileHeight'],
             (int) $content['config']['framesX'],
             (int) $content['config']['framesY'],
-        ));
+        ), sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/tileset.png'));
 
         return new BinaryFileResponse($tilesetImagick->getImageFilename());
     }

@@ -34,7 +34,7 @@ final class ImagickTileMerger implements TileMerger
             }
         ]
      */
-    public function merge(array $animationTiles, MergeOptions $options): Imagick
+    public function merge(array $animationTiles, MergeOptions $options, string $outputFilename): Imagick
     {
         $imagick = new Imagick();
         $imagick->newImage($options->imageWidth, $options->imageHeight, new ImagickPixel('transparent'));
@@ -62,6 +62,8 @@ final class ImagickTileMerger implements TileMerger
                 ++$iteration;
             }
         }
+
+        $imagick->writeImage($outputFilename);
 
         return $imagick;
     }

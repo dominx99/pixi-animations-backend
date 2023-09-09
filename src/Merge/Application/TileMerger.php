@@ -8,5 +8,5 @@ use Imagick;
 
 interface TileMerger
 {
-    public function merge(array $animationTiles, MergeOptions $options): Imagick;
+    public function merge(array $animationTiles, MergeOptions $options, string $outputFilename): Imagick;
 }
