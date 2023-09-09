@@ -1,3 +1,8 @@
 #!/bin/bash
 
+mkdir -p /application/src/resources/tilesets
+ln -sf /application/src/resources/tilesets /application/public/tilesets
+
+chown -R docker:docker /application/src/resources
+
 php-fpm

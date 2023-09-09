@@ -12,7 +12,7 @@ bash:
 
 deploy:
 	@git pull
-	@docker compose up -f docker-compose-prod.yml -d --build
+	@docker compose -f docker-compose.prod.yml up -d --build
 
 init:
 	cp .env.dist .env
