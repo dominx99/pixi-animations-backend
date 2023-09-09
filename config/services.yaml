@@ -6,6 +6,7 @@
 parameters:
   tilesetsPath: '%kernel.project_dir%/src/resources/tilesets'
   resourcesPath: '%kernel.project_dir%/src/resources'
+  websiteUrl: '%env(WEBSITE_URL)%'
 
 services:
     # default configuration for services in *this* file
@@ -15,6 +16,7 @@ services:
         bind:
             $tilesetsPath: '%tilesetsPath%'
             $resourcesPath: '%resourcesPath%'
+            $websiteUrl: '%websiteUrl%'
 
     App\:
         resource: '../src/'

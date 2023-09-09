@@ -9,3 +9,9 @@ merge_routes:
     path: ../src/Merge/UI/Http
     namespace: App\Merge\UI\Http
   type: attribute
+
+tiles_routes:
+  resource:
+    path: ../src/Tiles/UI/Http
+    namespace: App\Tiles\UI\Http
+  type: attribute
