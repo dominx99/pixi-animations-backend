@@ -67,4 +67,35 @@ final class ImagickTileMerger implements TileMerger
 
         return $imagick;
     }
+
+    public function mergeStaticTileset(array $tiles, MergeOptions $options, string $outputFilename): Imagick
+    {
+        $imagick = new Imagick();
+        $imagick->newImage($options->imageWidth, $options->imageHeight, new ImagickPixel('transparent'));
+        $imagick->setImageFormat('png');
+        $imagick->setImageVirtualPixelMethod(Imagick::VIRTUALPIXELMETHOD_TRANSPARENT);
+
+        foreach ($tiles as $tile) {
+            if (!isset($tile['tile']['path'])) {
+                continue;
+            }
+
+            $source = $this->resourcesPath . DIRECTORY_SEPARATOR . $tile['tile']['path'];
+            $tileImagick = new Imagick($source);
+
+            $x = $tile['x'] * $options->tileWidth;
+            $y = $tile['y'] * $options->tileHeight;
+
+            $imagick->compositeImage(
+                $tileImagick,
+                Imagick::COMPOSITE_DEFAULT,
+                $x,
+                $y,
+            );
+        }
+
+        $imagick->writeImage($outputFilename);
+
+        return $imagick;
+    }
 }

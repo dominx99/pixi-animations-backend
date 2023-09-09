@@ -8,7 +8,10 @@ use App\Files\Application\JsonFileManager;
 use App\Merge\Application\ImageSizeDeterminant;
 use App\Merge\Application\ImageSizeOptions;
 use App\Merge\Application\MergeOptions;
+use App\Merge\Application\MergeTilesetOptions;
 use App\Merge\Application\TileMerger;
+use App\Merge\Application\TilesetMerger;
+use App\Merge\Domain\Enum\AppendType;
 use App\Tiles\Application\OrderConfig;
 use App\Tiles\Application\TilesOrderer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +19,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use function App\Merge\Application\MergeTilesetOptions;
 
 final class MergePixiAnimationTileset extends AbstractController
 {
@@ -23,6 +27,7 @@ final class MergePixiAnimationTileset extends AbstractController
         private readonly ImageSizeDeterminant $imageSizeDeterminant,
         private readonly JsonFileManager $jsonFileManager,
         private readonly TileMerger $tileMerger,
+        private readonly TilesetMerger $tilesetMerger,
         private readonly string $tilesetsPath,
     ) {
     }
@@ -34,20 +39,40 @@ final class MergePixiAnimationTileset extends AbstractController
 
         $metadata = $this->jsonFileManager->load(sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/metadata/metadata.json'));
 
-        $size = $this->imageSizeDeterminant->determine($content['tileset']['tiles'], new ImageSizeOptions(
+        $animatedTilesetSize = $this->imageSizeDeterminant->determine($content['tileset']['tiles'], new ImageSizeOptions(
             (int) $metadata['tileWidth'],
             (int) $metadata['tileHeight'],
         ));
 
-        $tilesetImagick = $this->tileMerger->merge($content['tileset']['tiles'], new MergeOptions(
-            $size->width,
-            $size->height,
+        $staticTilesetSize = $this->imageSizeDeterminant->determineStaticTileset($content['staticTileset']['tiles'], new ImageSizeOptions(
+            (int) $metadata['tileWidth'],
+            (int) $metadata['tileHeight'],
+        ));
+
+        $tileset = $this->tileMerger->merge($content['tileset']['tiles'], new MergeOptions(
+            $animatedTilesetSize->width,
+            $animatedTilesetSize->height,
             (int) $metadata['tileWidth'],
             (int) $metadata['tileHeight'],
             (int) $content['config']['framesX'],
             (int) $content['config']['framesY'],
-        ), sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/tileset.png'));
+        ), sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/animated-tileset.png'));
 
-        return new BinaryFileResponse($tilesetImagick->getImageFilename());
+        $staticTileset = $this->tileMerger->mergeStaticTileset($content['staticTileset']['tiles'], new MergeOptions(
+            $staticTilesetSize->width,
+            $staticTilesetSize->height,
+            (int) $metadata['tileWidth'],
+            (int) $metadata['tileHeight'],
+            (int) $content['config']['framesX'],
+            (int) $content['config']['framesY'],
+        ), sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/static-tileset.png'));
+
+        $finalTileset = $this->tilesetMerger->merge(
+            [$tileset, $staticTileset],
+            new MergeTilesetOptions(AppendType::VERTICAL),
+            sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/tileset.png')
+        );
+
+        return new BinaryFileResponse($finalTileset->getImageFilename());
     }
 }

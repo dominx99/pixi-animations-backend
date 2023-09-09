@@ -34,4 +34,26 @@ final class InternalImageSizeDeterminant implements ImageSizeDeterminant
             $maxY * $options->tileHeight,
         );
     }
+
+    public function determineStaticTileset(array $tiles, ImageSizeOptions $options): ImageSize
+    {
+        $maxY = 1;
+        $maxX = 1;
+        foreach ($tiles as $tile) {
+            $x = $tile['x'] + 1;
+            $y = $tile['y'] + 1;
+            if ($y > $maxY) {
+                $maxY = $y;
+            }
+
+            if ($x > $maxX) {
+                $maxX = $x;
+            }
+        }
+
+        return new ImageSize(
+            $maxX * $options->tileWidth,
+            $maxY * $options->tileHeight,
+        );
+    }
 }
