@@ -75,4 +75,17 @@ final class Tileset
     {
         return $this->tiles->toArray();
     }
+
+    public function reorder(): void
+    {
+        $keysMap = $this->tiles->reduce(function (array $carry, Tile $tile) {
+            $carry[$tile->id] = $tile;
+
+            return $carry;
+        }, []);
+
+        ksort($keysMap);
+
+        $this->tiles = new ArrayCollection(array_values($keysMap));
+    }
 }

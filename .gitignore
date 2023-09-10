@@ -1,4 +1,5 @@
 src/resources
+resources
 .env
 
 ###> symfony/framework-bundle ###

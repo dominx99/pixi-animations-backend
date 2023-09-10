@@ -24,6 +24,10 @@ final class SymfonyTiledAnimationBuilder implements TiledAnimationBuilder
         foreach ($animatedTiles as $animatedTile) {
             $animation = new Animation();
 
+            if ($animatedTile->tiles->count() <= 1) {
+                continue;
+            }
+
             foreach ($animatedTile->tiles as $tile) {
                 $animation->addFrame(new Frame(
                     $tile->id->value,
@@ -40,6 +44,8 @@ final class SymfonyTiledAnimationBuilder implements TiledAnimationBuilder
                 $animation
             ));
         }
+
+        $tileset->reorder();
 
         return $tileset;
     }
