@@ -60,7 +60,8 @@ final class MergePixiAnimationTileset extends AbstractController
             (int) $metadata['tileHeight'],
         ));
 
-        $tileset = $this->tileMerger->merge($content['tileset']['tiles'], new MergeOptions(
+        $tilesets = [];
+        $tilesets[] = $this->tileMerger->merge($content['tileset']['tiles'], new MergeOptions(
             $animatedTilesetSize->width,
             $animatedTilesetSize->height,
             (int) $metadata['tileWidth'],
@@ -69,17 +70,19 @@ final class MergePixiAnimationTileset extends AbstractController
             (int) $content['config']['framesY'],
         ), sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/animated-tileset.png'));
 
-        $staticTileset = $this->tileMerger->mergeStaticTileset($content['staticTileset']['tiles'], new MergeOptions(
-            $staticTilesetSize->width,
-            $staticTilesetSize->height,
-            (int) $metadata['tileWidth'],
-            (int) $metadata['tileHeight'],
-            (int) $content['config']['framesX'],
-            (int) $content['config']['framesY'],
-        ), sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/static-tileset.png'));
+        if ($staticTilesetSize->width > 0 && $staticTilesetSize->height > 0) {
+            $tilesets[] = $this->tileMerger->mergeStaticTileset($content['staticTileset']['tiles'], new MergeOptions(
+                $staticTilesetSize->width,
+                $staticTilesetSize->height,
+                (int) $metadata['tileWidth'],
+                (int) $metadata['tileHeight'],
+                (int) $content['config']['framesX'],
+                (int) $content['config']['framesY'],
+            ), sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/static-tileset.png'));
+        }
 
         $finalTileset = $this->tilesetMerger->merge(
-            [$tileset, $staticTileset],
+            $tilesets,
             new MergeTilesetOptions(AppendType::VERTICAL),
             sprintf('%s/%s/%s', $this->tilesetsPath, $id, '/tileset.png')
         );

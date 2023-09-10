@@ -15,7 +15,7 @@ final class InternalImageSizeDeterminant implements ImageSizeDeterminant
         $tilesInRow = 1;
         foreach ($animationTiles as $animationTile) {
             $x = $animationTile['x'] + 1;
-            $y = $animationTile['y'] + 1;
+            $y = $animationTile['y'];
             if ($y > $maxY) {
                 $maxY = $y;
             }
@@ -37,8 +37,8 @@ final class InternalImageSizeDeterminant implements ImageSizeDeterminant
 
     public function determineStaticTileset(array $tiles, ImageSizeOptions $options): ImageSize
     {
-        $maxY = 1;
-        $maxX = 1;
+        $maxY = 0;
+        $maxX = 0;
         foreach ($tiles as $tile) {
             $x = $tile['x'] + 1;
             $y = $tile['y'] + 1;
