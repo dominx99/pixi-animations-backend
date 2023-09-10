@@ -7,6 +7,7 @@ namespace App\Cut\UI\Http;
 use App\Cut\Application\TileCutter;
 use App\Cut\Command\Domain\CutIntoPartsContext;
 use App\Files\Application\JsonFileManager;
+use App\Shared\Application\FileName;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -40,6 +41,8 @@ final class CutTilesetController extends AbstractController
             sprintf('%s/%s', $this->tilesetsPath, $id),
             CutIntoPartsContext::new($tileWidth, $tileHeight),
         );
+
+        $metadata->setName(FileName::fromString(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)));
 
         $this->jsonFileManager->save(
             sprintf('%s/%s/%s', $this->tilesetsPath, $id, 'metadata/metadata.json'),

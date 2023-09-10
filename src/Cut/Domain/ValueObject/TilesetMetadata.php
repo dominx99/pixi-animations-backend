@@ -7,6 +7,7 @@ namespace App\Cut\Domain\ValueObject;
 final class TilesetMetadata
 {
     private array $tiles = [];
+    private string $name;
 
     public function __construct(
         public readonly int $framesX,
@@ -21,9 +22,20 @@ final class TilesetMetadata
         $this->tiles[] = $tile;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
     public function toArray(): array
     {
         return [
+            'name' => $this->name,
             'framesX' => $this->framesX,
             'framesY' => $this->framesY,
             'tileWidth' => $this->tileWidth,
