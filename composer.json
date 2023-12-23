@@ -72,5 +72,9 @@
             "allow-contrib": false,
             "require": "6.3.*"
         }
+    },
+    "require-dev": {
+        "symfony/stopwatch": "6.3.*",
+        "symfony/web-profiler-bundle": "6.3.*"
     }
 }

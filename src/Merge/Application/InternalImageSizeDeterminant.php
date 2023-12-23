@@ -31,7 +31,7 @@ final class InternalImageSizeDeterminant implements ImageSizeDeterminant
 
         return new ImageSize(
             $maxX * $options->tileWidth * $tilesInRow,
-            $maxY * $options->tileHeight,
+            ($maxY + 1) * $options->tileHeight,
         );
     }
 

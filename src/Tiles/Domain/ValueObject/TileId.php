@@ -34,8 +34,6 @@ final class TileId
             tileid = 0 * 80 + (1 * 5) + 0 = 5
             tileid = 0 * 80 + (1 * 5) + 0 = 5
         */
-        $value = $position->y * $imageFrameSize->columns + ($iteration * $imageFrameSize->framesX) + $position->x;
-
         return new self(
             $position->y * $imageFrameSize->columns + ($iteration * $imageFrameSize->framesX) + $position->x,
         );

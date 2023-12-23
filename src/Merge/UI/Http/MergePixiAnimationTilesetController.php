@@ -29,9 +29,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use ZipArchive;
 
-final class MergePixiAnimationTileset extends AbstractController
+final class MergePixiAnimationTilesetController extends AbstractController
 {
-
     public function __construct(
         private readonly ImageSizeDeterminant $imageSizeDeterminant,
         private readonly JsonFileManager $jsonFileManager,
@@ -44,7 +43,7 @@ final class MergePixiAnimationTileset extends AbstractController
     }
 
     #[Route('/api/tileset/merge/{id}', name: 'merge_pixi_animation_tileset', methods: ['POST'])]
-    public function __invoke(Request $request, $id)
+    public function __invoke(Request $request, string $id)
     {
         $content = json_decode($request->getContent(), true);
 
@@ -116,7 +115,6 @@ final class MergePixiAnimationTileset extends AbstractController
                 ), $animatedTile['tiles'], array_keys($animatedTile['tiles']))
             )
         ), $content['tileset']['tiles']));
-
 
         $tileset = Tileset::new(
             image: new Image(
