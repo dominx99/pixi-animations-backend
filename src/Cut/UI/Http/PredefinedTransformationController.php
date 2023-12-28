@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Cut\UI\Http;
 
+use App\Cut\Application\TiledAnimationsTransformer;
 use App\Cut\Application\VerticalToHorizontalOptions;
 use App\Cut\Application\VerticalToHorizontalTransformer;
 use App\Cut\Domain\Enum\TransformationType;
@@ -41,10 +42,11 @@ final class PredefinedTransformationController extends AbstractController
         private readonly ImageSizeDeterminant $imageSizeDeterminant,
         private readonly TiledAnimationBuilder $tiledAnimationBuilder,
         private readonly SerializerInterface $serializer,
+        private readonly TiledAnimationsTransformer $tiledAnimationsTransformer,
     ) {
     }
 
-    #[Route('/api/tileset/predefined/{id}', name: 'merge_pixi_animation_tileset', methods: ['POST'])]
+    #[Route('/api/tileset/predefined/{id}', name: 'transform_predefined_transformation', methods: ['POST'])]
     public function __invoke(Request $request, string $id): Response
     {
         $content = json_decode($request->getContent(), true);
@@ -58,6 +60,14 @@ final class PredefinedTransformationController extends AbstractController
 
         if ($transformationType === TransformationType::VERTICAL_TO_HORIZONTAL) {
             $tilesToMerge = $this->verticalToHorizontalTransformer->transform(
+                $id,
+                $metadata,
+                VerticalToHorizontalOptions::fromArray($options),
+            );
+        }
+
+        if ($transformationType === TransformationType::ANIMATE) {
+            $tilesToMerge = $this->tiledAnimationsTransformer->transform(
                 $id,
                 $metadata,
                 VerticalToHorizontalOptions::fromArray($options),

@@ -39,6 +39,21 @@ final class Tiles
         return $maxY + 1;
     }
 
+    public function rows(): int
+    {
+        $maxX = 0;
+
+        /** @var Tile $tile */
+        foreach ($this->tiles as $tile) {
+            if ($tile->x > $maxX) {
+                $maxX = $tile->x;
+            }
+        }
+
+        return $maxX + 1;
+    }
+
+
     public function getTile(Position $position): Tile
     {
         /** @var Tile $tile */

@@ -4,26 +4,19 @@ declare(strict_types=1);
 
 namespace App\Cut\Application;
 
-use App\Tiles\Application\ImagickImageSizeDeterminant;
-use App\Tiles\Domain\ValueObject\AnimatedTile;
-use App\Tiles\Domain\ValueObject\Position;
-use App\Tiles\Domain\ValueObject\Tiles;
-use Doctrine\Common\Collections\ArrayCollection;
 use Throwable;
 
-final class VerticalToHorizontalTransformer
-{
-    public function __construct(private readonly ImagickImageSizeDeterminant $imagickImageSizeDeterminant)
-    {
-    }
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Tiles\Domain\ValueObject\Position;
+use App\Tiles\Domain\ValueObject\AnimatedTile;
+use App\Tiles\Domain\ValueObject\Tiles;
 
-    /**
-     * @param array $tiles
-     */
+final class TiledAnimationsTransformer
+{
     public function transform(string $id, array $tiles, VerticalToHorizontalOptions $options): array
     {
         $tiles = Tiles::fromArray($tiles['tiles'], $id);
-        $iterations = floor($tiles->columns() / $options->framesX);
+        $iterations = floor($tiles->rows() / $options->framesX);
 
         $animatedTiles = new AnimatedTiles();
 
@@ -34,7 +27,7 @@ final class VerticalToHorizontalTransformer
                 for ($i = 0; $i < $iterations; $i++) {
                     try {
                         $animatedTile->addTile($tiles->getTile(
-                            new Position($x, $y + $i * $options->framesY)
+                            new Position($x + $i * $options->framesX, $y)
                         ));
                     } catch (Throwable $e) {
                         $test = $e;

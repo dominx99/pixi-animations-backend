@@ -10,7 +10,7 @@ final class InternalImageSizeDeterminant implements ImageSizeDeterminant
 {
     public function determine(array $animationTiles, ImageSizeOptions $options): ImageSize
     {
-        $maxY = 1;
+        $maxY = 0;
         $maxX = 1;
         $tilesInRow = 1;
         foreach ($animationTiles as $animationTile) {
@@ -31,7 +31,7 @@ final class InternalImageSizeDeterminant implements ImageSizeDeterminant
 
         return new ImageSize(
             $maxX * $options->tileWidth * $tilesInRow,
-            ($maxY + 1) * $options->tileHeight,
+            ($maxY > 0 ? ($maxY + 1) : 1) * $options->tileHeight,
         );
     }
 
